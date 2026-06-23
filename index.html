@@ -1,118 +1,1156 @@
-<html>
-    <title>Simulacro</title>
-    <style type="text/css">
-table, tr, th, td {border:3px solid #000; border-collapse:collapse; padding:5px;}
- 
-h1#titulo {color:teal;}
- 
-strong {color:red;}
-span.destacado {color: orange; }
- 
-h2#subtitulo {color: blue;}
- 
-span.especial {color: purple;}
- 
-a {color:red;}
-a em {color: blue;}
-a:Link {text-decoration:none;}
-a:hover {background-color: yellow;color:green;}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puertas Lógicas — Analogía del Agua</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #011E60;
+  --orange: #E8622A;
+  --water: #1FA2D9;
+  --water-light: #7FCDEE;
+  --bg: #EFF4FB;
+  --surface: #FFFFFF;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--navy);
+  min-height: 100vh;
+  padding: 16px 20px 28px;
+}
+h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.legend {
+  font-size: 0.78rem;
+  color: #4a5878;
+  line-height: 1.8;
+  text-align: right;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(1,30,96,0.08);
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.tab-btn {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 7px 22px;
+  border: 2px solid var(--navy);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--navy);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  letter-spacing: 0.02em;
+}
+.tab-btn.active {
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(1,30,96,0.22);
+}
+.tab-btn:hover:not(.active) { background: rgba(1,30,96,0.08); }
+.tab-btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 
-div#adicional p {color:#fff; padding-left:15px;}
-div#adicional  {border:1px dashed red;background-color:rebeccapurple;}
-div#adicional span#especial {color:brown;}
-div#adicional p span {color:yellow;}
-div#adicional a {color: green;}
+.main-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.canvas-wrapper {
+  flex: 1;
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: 0 6px 28px rgba(1,30,96,0.10);
+  padding: 10px;
+  position: relative;
+  min-width: 0;
+}
+#simCanvas {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+#simCanvas:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 
+/* Invisible tap buttons for keyboard accessibility */
+.tap-hit-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 50%;
+}
+.tap-hit-btn:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
 
-caption {color: Fuchsia; font-weight:bold;}
-td {color: green; text-align:center;}
-td strong {color: orange;}
-th {color: red;}
-th.especial {color: orange;}
+.side-panel {
+  width: 270px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.card {
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(1,30,96,0.09);
+  padding: 18px 20px;
+}
+.card-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #7a90b0;
+  margin-bottom: 12px;
+}
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  text-align: center;
+  padding: 6px 4px 8px;
+  border-bottom: 2px solid var(--navy);
+}
+td {
+  text-align: center;
+  padding: 9px 4px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(1,30,96,0.07);
+  transition: background 0.25s, color 0.25s;
+}
+tr.active-row td { background: rgba(232,98,42,0.09); }
+tr.active-row td:first-child,
+tr.active-row td:nth-child(2) { font-weight: 700; color: var(--orange); }
+.c-cell { transition: opacity 0.35s, color 0.2s; }
+.c-hidden { opacity: 0; }
+.c-visible { opacity: 1; font-weight: 800; }
+.c-val1 { color: #1a9e40; }
+.c-val0 { color: #cc2020; }
+
+.output-card { text-align: center; }
+.output-big {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 3.8rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.3s;
+}
+.output-big.val0 { color: #a0aec0; }
+.output-big.val1 { color: var(--water); }
+.output-sub {
+  font-size: 0.82rem;
+  color: #6b7d99;
+  margin-top: 4px;
+}
+.expl-card {
+  background: rgba(31,162,217,0.07);
+  border-left: 3px solid var(--water);
+  border-radius: 0 12px 12px 0;
+  padding: 12px 14px;
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: #1a3560;
+  min-height: 60px;
+  transition: opacity 0.3s;
+}
+.reset-btn {
+  background: transparent;
+  border: 1px solid rgba(1,30,96,0.25);
+  border-radius: 8px;
+  color: #7a90b0;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  align-self: flex-start;
+}
+.reset-btn:hover { border-color: var(--navy); color: var(--navy); }
+.reset-btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+
+@media (max-width: 720px) {
+  .main-layout { flex-direction: column; }
+  .side-panel { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
 </style>
-    <body bgcolor="Thistle">
-        <h1 id="titulo">SIMULACRO CSS (en h1)</h1>
-        <p>Mucho texto de relleno sin estilo. <strong>ESTE TEXTO ESTA "STRONG".</strong> Aún mucho más texto de relleno sin estilo. <span class="destacado">ESTE TEXTO ESTÁ "DESTACADO".</span> Esto es un algo más de texto sin estilo;</p>
-        <h2 id="subtitulo">OTRO TÍTULO SIN SENTIDO (en h2 para tocar los huevos)</h2>
-        <p>Esto es más texto sin estilo (sacadme de aquí).  <a href="#">Y su nombre es: <em>ENLACE</em> inútil que no lleva a ninguna parte pero hace cositas reshulonas :3 </a> Y por aquí un poco más de texto sin sentido (en serio sacadme de aquí). <span class="especial">Esto es texto span con clase "Especial" (sí, como vosotros). </span> Aún más texto sin estilo.</p>
-        <center>
-            <table summary="DESCRIPCION DE LA TABLA Y SU CONTENIDO">
-                <caption>TÍTULO</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">C1<em>F1</em></th>
-                        <th scope="col" class="especial">C2<em>F1</em></th>
-                        <th scope="col" class="especial">C3<em>F1</em></th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th scope="col">C1<em>F4</em></th>
-                        <th scope="col">C2<em>F4</em></th>
-                        <th scope="col">C3<em>F4</em></th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <tr>
-                        <th scope="row" class="especial">C1<em>F2</em></th>
-                        <td>C2<em>F2</em></td>
-                        <td>C3<em>F2</em></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">C1<em>F3</em></th>
-                        <td>C2<em>F3</em></td>
-                        <td>C3<em>F3</em></td>
-                    </tr>
-                </tbody>
-            </table>
-        </center>
-        <br><br>
-        <div id="adicional">
-            <p>Soy más texto inútil... <span>pero cambio de color jiji</span>. ¿Sorprendente? Lo dudo.</p>
-            <p>Me estoy volviendo locoooo (sin estilo) <span id="especial">Un poquito de texto span de la clase vuestra (Especial) pero vot a perro Sanxe (rojo)</span>. Hola, soy Antonio Lobato, ¿quieres saber cuánto vale tu coche?</p>
-            <p>¡WOW es Antonio Lobato! <a href="#">Este es otro enlace inutil que hace cositas reshulonas y kawaiis</a> Visita compramostucoche.es (esto podría haber ido en el enlace reshulon pero me la pela) y te lo taxamos al momento</p>
-        </div>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <p>⠀⠀⠀⠀⠀⠀⠀⠀⢀⢔⠾⢋⠷⢃⠠⠒⠈⠀⢀⣀⢂⢠⣲⢦⡪⠝⠀⢠⠎⠀⠀⠀⠀⠀⣠⣴⢪⡃⠜⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⡀⠖⠁⠀⢀⠀⠀⡀⠀⠀⠀⠀⢀⣤⠦⡻⠂⠀⠀⠀⢼⡆⠀⠀⠁⡔⡀⡸⠀⢠⠃⠀⢸⣐⣷⣏⠉⠁⠉⢻⡄⠀⠀⡱⠑⢆⣨⠟⠊⠉⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⢀⢔⠕⢁⠔⠁⠐⣁⣤⠴⠚⠉⢀⣠⠖⡫⠃⠁⠀⠀⣰⠃⠀⠀⡠⠀⢠⠞⡵⠃⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠀⢀⠔⠈⠀⠀⠀⠔⡰⢃⠔⠁⠀⠀⠀⠼⡫⣠⠎⠀⠀⢀⠤⠀⠀⠀⠀⠀⠀⠰⢁⠃⢀⠇⠀⠀⣼⠋⣟⡆⠇⢀⠀⠸⢎⢵⠀⠱⠱⡈⢧⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⣠⡡⠁⢠⣁⣀⡴⡚⠅⠐⠈⢀⡴⠋⠐⠁⢀⡠⡤⠄⣰⠃⠀⠀⣰⠁⠀⣠⠊⠀⠀⠀⠀⢀⣀⣠⣤⠤⠶⠚⠋⠉⢀⡠⠀⠀⠀⠀⢠⣮⠞⣐⠅⠀⠀⠀⠀⢀⡴⠋⠁⣀⣠⠔⠁⠀⠀⢠⠃⠀⠀⠀⢦⠂⢠⠊⠀⠀⠚⠙⢰⢸⣷⢰⠈⢆⠀⠙⣮⢣⠀⠐⡔⡒⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢠⠟⣠⠖⠋⢁⠚⠃⣀⠔⠚⡷⠉⣉⡤⡲⢭⠞⢉⠃⣰⠏⠀⠀⡴⣉⡀⡚⠁⠑⠒⠀⡛⠛⢉⢁⠄⠀⣠⠗⠀⢀⡴⠋⠀⢀⠤⢠⢾⠋⢡⠞⠁⠀⡠⠒⠀⢀⣎⣠⢞⢵⠟⠁⠀⢀⠔⠠⠃⠀⡔⡐⠀⡇⠀⠁⠀⠀⠀⠀⡃⠈⠀⣿⠈⡀⡇⠣⡀⠈⢧⠡⡀⠈⢊⢜⣧⡀⠀⠀⠀⠀⠀⠀⠀⣀⡠⢤⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢸⢶⠃⠀⢀⠃⢠⡞⠁⢀⡼⡷⢋⣥⣮⠴⠁⡠⣵⢻⡟⠀⢀⡼⢋⢊⠌⠀⡠⠊⢀⠊⢀⣀⣆⠃⠀⣰⠃⢀⡴⠋⠀⢀⠔⠕⡡⠞⣠⠝⠁⠀⣠⠊⢀⣤⠖⣡⠞⣕⡡⠁⠀⣠⡞⡡⣶⡵⠀⣸⢣⠇⢸⡟⠀⠀⠀⡀⠀⢠⠁⡆⠀⡷⠀⡇⣏⡄⢻⠄⠀⠱⡷⣄⠀⠡⡹⡇⠀⢀⡀⠄⠒⠈⠁⠀⠀⠀⠀⠉⠓⢤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠈⠙⠀⠀⡎⢠⠋⠀⣠⡮⠔⠈⣩⠞⠁⢀⢊⡾⢡⡄⠁⢠⡾⠡⠡⢂⠠⠊⢀⠔⣀⡴⢋⡏⠎⠀⣸⠃⣰⠟⠁⠀⡐⠁⡡⡊⠔⠈⡁⢐⣔⡟⢡⠞⡑⣡⠎⣡⠞⠝⠀⢀⣮⢟⠊⡸⠹⠁⢰⠃⣼⠀⣿⠂⢰⠀⢰⠃⠀⡌⢰⡗⢰⡧⠀⢫⡷⠇⠀⣎⢆⠀⡇⠏⢳⡤⠜⠓⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⢄⡀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠑⣿⣖⡾⠋⠀⡠⠊⠁⢠⣖⣵⡭⡂⠁⠘⠄⢳⠁⡶⠓⣡⣰⣖⡥⠞⠁⣀⢼⢱⠀⣰⢃⡼⠃⠀⢠⡪⣪⠞⠋⡀⢔⣠⠦⠛⠉⣠⡳⢊⡴⢣⠞⢁⠊⠀⣠⡿⠛⢁⠎⢠⡳⢡⠏⢸⠟⢠⢟⠀⢸⠀⢸⠁⠀⢁⡿⠁⢠⠇⠀⠘⡇⠘⠀⡆⣾⠠⠓⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠦⡀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⡀⠝⠛⠀⡠⢊⣠⠾⠗⡾⠁⢳⠀⣽⡄⠀⢘⠾⣊⠴⢋⡵⢫⣷⣃⢀⠔⠁⣿⠆⠀⠀⡞⢁⠀⠴⠛⠘⣀⣔⡬⢖⠋⠁⢀⠔⣶⡟⠡⢈⡕⠛⠠⠂⠀⣰⠋⠀⡰⠁⢀⣧⢡⡎⢀⠟⠀⣸⢹⠀⢸⠀⡸⠀⠀⣾⠁⠀⡌⠀⣀⡸⠙⣄⠶⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠦⡀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⣰⣪⠖⠋⠀⢀⠜⢀⢌⠜⡆⣿⠼⣺⢗⣟⣡⡎⢡⠃⣤⠹⠘⠢⡤⢄⣛⡐⠠⠼⠍⠐⠀⣀⡤⡞⠉⠁⣤⠋⢀⠔⠁⣼⠏⠐⢠⠎⠐⠰⠃⠀⡼⠁⠀⡜⠀⡰⣻⢃⡞⠀⣸⠃⢀⡟⢰⠀⢸⠀⣷⠀⣸⠁⠀⡘⠀⣼⡿⠁⢠⢏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢦⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢎⣸⠃⠀⠀⡠⢃⣴⠟⣡⣴⣿⣷⠛⠛⡈⡇⢠⠗⢸⣾⠸⡇⠀⠀⠈⠑⡾⣫⢒⣴⣶⢟⠵⢡⠌⠀⠀⠔⠃⡠⠁⠀⣾⢋⠌⡰⠁⠀⠠⢁⡄⠐⠀⠀⢞⡒⡰⢠⡏⡾⢠⢧⡏⠀⢺⠯⢥⠀⢸⠀⡽⢠⠃⠀⡰⠇⣸⠗⠃⢠⢳⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠀⠅⠀⠀⠀⠀⠈⠷⡄⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣨⣢⢔⣡⠖⢫⠽⠑⡟⠉⢸⢯⢏⠉⣵⡇⣸⠀⢘⢨⠃⡁⠓⠒⢢⢞⢜⣥⣫⣿⡧⠃⠀⡌⠀⠀⠈⠀⠊⠀⠀⣼⠃⠊⡐⠀⠀⢠⠣⡞⢠⡆⠀⡎⠀⠀⠁⣼⡝⢠⠟⡸⠀⠀⢸⢐⣸⠂⢸⠀⡇⢂⠄⡠⣧⣷⠏⠀⢠⡇⡈⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⡆⠀⢰⡆⠀⢠⣾⣷⡀⢀⣾⠀⠀⣾⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡆
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠚⠿⠚⠋⠁⠌⠁⡠⠊⡐⣡⢟⡌⡈⢒⡏⢰⢸⢰⢸⢺⡄⠀⢀⡴⣷⢿⠏⢈⣿⠟⠷⢆⡤⢀⣀⠀⠀⠀⠀⠀⢀⣏⠌⡔⠀⠀⠀⣆⠾⢁⡞⡇⡜⠀⠀⠀⣀⣯⡴⣥⢷⠓⠒⠋⠉⠡⢸⠀⢸⠀⠇⠎⣠⠱⢸⠇⠀⢠⠃⢠⢁⡇⠀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣷⢀⡿⢁⣴⠟⣹⣿⠀⣾⣷⣶⣾⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡇
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠔⠋⣀⣪⠞⡑⢁⢧⠙⠀⢇⢸⣿⢺⡞⡚⡯⢴⡙⠉⢀⡐⠂⡘⡞⠀⠅⠠⠉⠁⠚⠣⠝⣔⠶⣀⠀⠁⡰⠀⠀⠀⠀⡏⣄⡜⠀⡷⢓⣢⠿⠍⠛⠋⠠⡡⠂⠀⠀⠀⢀⠀⢀⡇⢨⠀⣶⡜⢸⠀⡟⠀⠀⢆⣠⠃⡈⡇⠀⠀⠀⠀⠀⠀⠀⠀⣿⠉⣿⣿⢃⣾⠿⠟⢻⣟⣸⡟⠁⢠⡿⠁⢀⣴⠆⠀⠀⠀⠀⠀⠀⠀⢠⡇
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠴⠞⠧⠜⠋⢁⠂⠌⡰⢃⣾⣦⠀⢸⡀⣿⣄⢁⠇⠀⠀⢯⣝⣖⣿⣯⣿⣒⡭⠥⣐⡒⠤⢀⠀⠀⠈⠉⡛⢆⢠⠃⠀⠀⠀⠀⠑⠋⢀⣀⠻⠉⠁⠀⠀⢀⡠⠔⣒⣀⣭⣝⣛⣫⣿⣿⣧⠘⠀⣳⠀⣼⢠⠃⠀⠀⠸⣹⢀⠃⡇⠀⠀⠀⠄⠀⠀⠀⠀⠀⠀⠘⠃⠘⠃⠀⠀⠙⠋⠛⠀⠀⠙⠃⢠⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⢸⠃
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⢀⠂⣼⡞⠁⣾⡡⠘⡆⢸⡇⢸⡘⡈⢶⠀⠀⠀⢼⣣⠀⠀⢸⡄⠈⢽⡇⠛⠷⣦⣽⠀⠀⠀⠘⡟⡇⠀⠀⠀⠀⠀⠀⢠⣾⠆⠀⠀⠀⠀⢀⣯⡴⣾⠛⠩⠧⠄⣸⠃⠀⠀⣼⠆⢰⣇⡼⢰⣿⠄⠀⠀⠠⢿⠸⢰⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣤⡀⣤⡄⢀⣠⣬⣥⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣨⡴⠋⠀⢰⣿⠁⢀⣿⣸⠁⢶⠧⠀⠘⢇⠀⠀⠘⢞⡄⠀⠀⠙⠧⣀⡂⠤⠂⠈⢿⣇⠀⠀⠀⠼⢿⠀⠀⠀⠀⠀⠀⢠⠘⠆⠀⠀⠀⠀⣼⡏⠀⠈⠢⢄⡤⠴⠫⠀⠀⡰⠸⡄⢳⣷⢇⡂⣯⠀⠀⢠⠃⠎⢀⠟⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢻⡟⠉⣿⠋⠀⣿⠟⠉⠉⣽⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⣿⡏⠀⣼⢣⣿⡄⢸⡇⠀⠀⠈⠂⠀⠀⠀⠜⢄⡀⠀⠀⠀⠀⠀⠀⢀⡟⠯⡶⡶⢀⡶⠋⠀⠀⠀⠀⠀⠀⠀⠁⠀⢀⣄⡀⢰⡟⠳⡀⠀⠀⠀⠀⠄⠁⢀⠗⠣⠀⡌⡟⡆⢸⠇⠈⠁⡤⢸⡀⢠⠎⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡿⠁⠀⠀⠀⢰⡟⣀⣤⡾⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡟⢣⠜⠁⡾⠼⡆⠀⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠁⠀⠚⠋⠀⠌⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠓⣞⣤⡀⠁⠉⠉⠉⠉⠀⠀⡀⠀⠀⠀⠠⣷⢸⡁⠈⠀⠀⢀⡇⠀⢡⢿⠁⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣶⡾⠿⠟⠂⠀⠀⠿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠄⠊⠁⠀⡸⡷⢣⠺⣆⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠠⡰⠇⠘⡄⠀⠀⠀⢸⠀⢠⢿⢹⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡵⠓⠁⠀⠈⠛⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠈⠀⠀⠀⠀⠀⠐⠁⠀⠀⠁⠀⠀⢀⣇⣠⣟⡟⡜⡀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⡆⢠⣷⡆⠀⣼⠆⣰⡆⢰⣷⠀⠀⣾⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⢹⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⠋⣿⢰⠇⢸⣱⡀⢤⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⢠⡾⣿⣇⣼⠏⢠⡿⢀⣿⢿⣧⣼⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠂
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⠇⠀⣿⣿⠀⠀⡏⠁⢸⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡟⠁⢿⣿⠋⢀⣾⠁⣾⠃⠈⣿⡟⠀⣤⡦⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡟⠀⢰⣟⠇⠀⠈⠀⠀⡼⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠀⠀⠈⠁⠀⠈⠃⠀⠉⠀⠀⠈⠁⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⢀⠞⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⠁⠀⡾⠊⠀⠀⠀⠀⠀⠹⣄⠀⠀⠀⠀⠀⠀⠐⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠎⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⢐⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⢄⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠋⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠋⢦⡀⠀⢀⠄⠀⠀⠀⠀⢔⠀⠀⠀⠃⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⣴⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠂⢄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⠃⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡽⢆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠈⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠐⠢⢄⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⢀⣠⣴⡾⠁⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣩⡎⢳⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⠀⠀⠀⠀⠀⠀⠀⠀⠠⠀⠀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠁⣼⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠀⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠓⢾⠗⣀⠤⠤⠤⠄⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢯⣳⠀⠹⣆⠀⠀⠀⠀⠀⠰⠦⠄⣀⣀⡀⠀⠀⠀⠀⠀⢀⡀⠀⠀⠀⠀⠂⠄⠀⠀⠀⣀⡀⠠⠴⠛⠁⠀⠀⠀⢀⡜⠁⠀⡰⣿⡇⠀⡀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⢠⢋⠖⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⢌⡆⠀⠈⢷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠨⡙⢿⣿⣛⠛⠛⠛⠛⠛⠛⢻⣛⣩⢿⡋⠉⠀⠀⠀⠀⠀⠀⠀⢀⡴⠋⠀⢀⣴⠿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠗⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡎⠳⣵⠀⠀⠀⠹⣦⠀⠈⠀⠀⠀⠀⠀⠀⠀⠑⠦⣤⣤⣭⣭⣭⣭⣭⢩⡽⠞⠃⠀⠀⠀⠀⠠⠀⠀⢀⡴⠋⠀⠁⠀⣲⠯⢸⡗⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠈⠀⠀⠂⠀⠈⢳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⠀⡁⠀⠃⠀⡤⠀⠀⠀⠀⠀⠀⠀⡴⠋⠀⠀⠀⠀⢰⡿⢌⣿⡅⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠁⠀⠄⠩⡿⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠒⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⣠⠮⠀⠀⠀⠀⠀⠀⢐⡺⢁⣓⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣧⠀⢈⠠⡀⠀⠀⠀⠀⢘⣝⢿⣆⠀⠀⠈⠀⠀⠤⠀⠀⠀⠀⠐⠀⠀⠀⠀⠀⠀⠀⠁⣠⣾⠏⠀⠀⠀⠀⠀⠀⠒⠁⠀⢸⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢼⣿⣿⠀⠀⠑⢌⢰⠀⠀⠀⠀⠳⣅⡫⠳⣤⡀⡀⡀⠀⠀⠀⠐⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⡽⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣠⣴⣿⣿⣿⣿⣷⠀⠀⠀⢳⣍⠢⠀⠀⠀⠀⢻⡟⠆⠈⠹⠶⣤⣀⣀⣏⣈⡀⣀⢀⣀⣀⣠⣴⠿⣛⢝⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣶⣤⡀⠀⠀⠀⠀⠀⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠈⢯⡫⡠⠀⠀⠀⠀⠻⣯⡀⠀⠀⠀⠀⠈⠉⠉⠙⠙⠋⠛⠙⢫⣍⡳⠎⠀⠀⠀⠀⠀⠐⠀⠀⠀⠀⠀⠀⢀⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣼⣿⣿⣿⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠈⡟⣬⡐⠀⠀⠀⠀⠱⡷⣂⠥⠀⡄⠀⠀⠀⠀⠀⠀⠀⠀⣜⣪⠍⠀⠀⠀⠀⡠⠎⠁⣀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣷⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣄⠸⡦⡋⡄⠀⠀⠀⠀⠜⢎⠙⠕⣂⠀⠤⢀⠀⠀⠀⠀⠜⠳⠋⠀⠀⠀⢀⡸⢋⡥⠴⣇⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣾⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣻⣿⣿⣿⣿⣿⣿⣷⣌⡢⡹⡄⠀⠀⠀⠀⠘⡖⠔⣒⡠⠄⡭⠃⠀⠀⠐⡺⠁⠀⠀⢀⡴⢿⡙⠃⣐⠒⠉⠁⢀⣠⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⢀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣧⣀⡀⠀⠀⠀⠻⠅⡒⠄⢹⡁⠀⠀⠀⢻⠀⠀⠀⢠⣾⣿⡋⢠⠑⢀⣃⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</p>
-    </body>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>Puertas Lógicas</h1>
+    <p style="font-size:0.82rem;color:#5a7090;margin-top:3px">Haz clic en los grifos para abrirlos o cerrarlos</p>
+  </div>
+  <div class="legend">
+    🚰 Grifo abierto&nbsp;=&nbsp;<strong>1</strong> &nbsp;·&nbsp; Cerrado&nbsp;=&nbsp;<strong>0</strong><br>
+    🫙 Jarra llena&nbsp;=&nbsp;<strong>1</strong> &nbsp;·&nbsp; Vacía&nbsp;=&nbsp;<strong>0</strong>
+  </div>
+</div>
+
+<div class="tabs" role="tablist" aria-label="Selección de puerta lógica">
+  <button class="tab-btn active" role="tab" data-gate="OR"  aria-selected="true">OR</button>
+  <button class="tab-btn"        role="tab" data-gate="AND" aria-selected="false">AND</button>
+  <button class="tab-btn"        role="tab" data-gate="XOR" aria-selected="false">XOR</button>
+</div>
+
+<div class="main-layout">
+  <div class="canvas-wrapper" id="canvasWrap">
+    <canvas id="simCanvas" aria-label="Simulación de puerta lógica"></canvas>
+    <!-- Invisible accessible tap buttons, positioned by JS -->
+    <button class="tap-hit-btn" id="tapBtnA"
+      role="button" aria-pressed="false"
+      aria-label="Grifo A — cerrado. Pulsa para abrir."
+      tabindex="0"></button>
+    <button class="tap-hit-btn" id="tapBtnB"
+      role="button" aria-pressed="false"
+      aria-label="Grifo B — cerrado. Pulsa para abrir."
+      tabindex="0"></button>
+  </div>
+
+  <div class="side-panel">
+    <div class="card">
+      <div class="card-label">Tabla de verdad</div>
+      <table>
+        <thead><tr><th>A</th><th>B</th><th>C</th></tr></thead>
+        <tbody id="truthBody">
+          <tr data-key="00"><td>0</td><td>0</td><td class="c-cell c-hidden" id="c00"></td></tr>
+          <tr data-key="01"><td>0</td><td>1</td><td class="c-cell c-hidden" id="c01"></td></tr>
+          <tr data-key="10"><td>1</td><td>0</td><td class="c-cell c-hidden" id="c10"></td></tr>
+          <tr data-key="11"><td>1</td><td>1</td><td class="c-cell c-hidden" id="c11"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card output-card">
+      <div class="card-label">Salida</div>
+      <div class="output-big val0" id="outputBig">0</div>
+      <div class="output-sub">C = A <span id="gateLabel">OR</span> B</div>
+    </div>
+
+    <div class="expl-card" id="explText">
+      Ambos grifos cerrados: no cae agua, la jarra permanece vacía.
+    </div>
+
+    <button class="reset-btn" id="resetBtn" aria-label="Cerrar ambos grifos">↺ Reiniciar grifos</button>
+  </div>
+</div>
+
+<script>
+/* ── CANVAS SETUP ─────────────────────────────────────────── */
+const canvas = document.getElementById('simCanvas');
+const ctx    = canvas.getContext('2d');
+const DPR    = window.devicePixelRatio || 1;
+const CW = 700, CH = 480;   // logical canvas size
+
+function resizeCanvas() {
+  const w = canvas.parentElement.clientWidth - 20;
+  canvas.style.width  = w + 'px';
+  canvas.style.height = (w * CH / CW) + 'px';
+  canvas.width  = w * DPR;
+  canvas.height = (w * CH / CW) * DPR;
+  ctx.setTransform(DPR * w / CW, 0, 0, DPR * w / CW, 0, 0);
+  positionTapButtons();
+}
+window.addEventListener('resize', resizeCanvas);
+
+/* ── GATE DATA ────────────────────────────────────────────── */
+// Tap visual centers
+const TA = { x: 125, y: 52 };
+const TB = { x: 575, y: 52 };
+// Spout exit points (where water originates)
+const SA = { x: 195, y: 88 };
+const SB = { x: 505, y: 88 };
+// Jar bounds
+const JL = 215, JR = 485, JT = 255, JB = 432, JCX = 350;
+
+const GATES = {
+  OR: {
+    label: 'OR',
+    jarType: 'wide',
+    out: { '00':0, '01':1, '10':1, '11':1 },
+    expl: {
+      '00': 'Ambos grifos cerrados: no cae agua, la jarra queda vacía.',
+      '10': 'Solo A abierto: el chorro cruza hacia la derecha — la boca ancha lo recibe. La jarra se llena.',
+      '01': 'Solo B abierto: el chorro cruza hacia la izquierda — la boca ancha lo recibe. La jarra se llena.',
+      '11': 'Ambos grifos abiertos: los dos chorros entran — la jarra se llena.'
+    },
+    streams: {
+      '10': [{ p0:SA, cp:{x:375,y:130}, p1:{x:432,y:262}, tag:'A', enters:true }],
+      '01': [{ p0:SB, cp:{x:325,y:130}, p1:{x:268,y:262}, tag:'B', enters:true }],
+      '11': [
+        { p0:SA, cp:{x:375,y:125}, p1:{x:336,y:163}, tag:'A', enters:false, collide:true },
+        { p0:SB, cp:{x:325,y:125}, p1:{x:364,y:163}, tag:'B', enters:false, collide:true },
+        { p0:{x:350,y:165}, cp:{x:350,y:213}, p1:{x:350,y:262}, tag:'C', enters:true, postColl:true }
+      ]
+    },
+    splash: { x:350, y:162 }
+  },
+  AND: {
+    label: 'AND',
+    jarType: 'flask',
+    out: { '00':0, '01':0, '10':0, '11':1 },
+    expl: {
+      '00': 'Ambos grifos cerrados: no cae agua, la jarra queda vacía.',
+      '10': 'Solo A abierto: el chorro cruza hacia la derecha y choca con la pared del cuello — no puede entrar solo.',
+      '01': 'Solo B abierto: el chorro cruza hacia la izquierda y choca con la pared del cuello — no puede entrar solo.',
+      '11': '¡Ambos abiertos! Los chorros colisionan en el aire sobre el cuello — el impacto los redirige hacia abajo. ¡La jarra se llena!'
+    },
+    streams: {
+      '10': [{ p0:SA, cp:{x:375,y:130}, p1:{x:435,y:315}, tag:'A', enters:false }],
+      '01': [{ p0:SB, cp:{x:325,y:130}, p1:{x:265,y:315}, tag:'B', enters:false }],
+      '11': [
+        { p0:SA, cp:{x:375,y:128}, p1:{x:344,y:246}, tag:'A', enters:false, collide:true },
+        { p0:SB, cp:{x:325,y:128}, p1:{x:356,y:246}, tag:'B', enters:false, collide:true },
+        { p0:{x:350,y:248}, cp:{x:350,y:272}, p1:{x:350,y:302}, tag:'C', enters:true, postColl:true }
+      ]
+    },
+    splash: { x:350, y:246 }
+  },
+  XOR: {
+    label: 'XOR',
+    jarType: 'twohole',
+    out: { '00':0, '01':1, '10':1, '11':0 },
+    expl: {
+      '00': 'Ambos grifos cerrados: no cae agua, la jarra queda vacía.',
+      '10': 'Solo A abierto: el chorro cruza hacia la boca derecha — la jarra se llena.',
+      '01': 'Solo B abierto: el chorro cruza hacia la boca izquierda — la jarra se llena.',
+      '11': '¡Ambos abiertos! Los chorros colisionan sobre el cristal central — el agua salpica hacia fuera. La jarra no se llena.'
+    },
+    streams: {
+      '10': [{ p0:SA, cp:{x:390,y:133}, p1:{x:451,y:275}, tag:'A', enters:true }],
+      '01': [{ p0:SB, cp:{x:310,y:133}, p1:{x:249,y:275}, tag:'B', enters:true }],
+      '11': [
+        { p0:SA, cp:{x:380,y:130}, p1:{x:344,y:220}, tag:'A', enters:false, collide:true },
+        { p0:SB, cp:{x:320,y:130}, p1:{x:356,y:220}, tag:'B', enters:false, collide:true }
+      ]
+    },
+    splash: { x:350, y:220 }
+  }
+};
+
+/* ── STATE ────────────────────────────────────────────────── */
+let gate     = 'OR';
+let openA    = false, openB = false;
+let wLevel   = 0;        // 0‥1 current water
+let wTarget  = 0;        // 0 or 1
+let tick     = 0;
+let particles= [];
+let splashCooldown = 0;
+const PRM    = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function key() { return (openA?'1':'0') + (openB?'1':'0'); }
+function output() { return GATES[gate].out[key()]; }
+
+/* ── UTILITIES ────────────────────────────────────────────── */
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clamp(v,lo,hi){ return v<lo?lo:v>hi?hi:v; }
+function bpt(t,p0,cp,p1){
+  const m=1-t;
+  return { x:m*m*p0.x+2*m*t*cp.x+t*t*p1.x, y:m*m*p0.y+2*m*t*cp.y+t*t*p1.y };
+}
+// Stable pseudo-random (no Math.random in draw)
+function sr(seed){ let x=Math.sin(seed*127.1+311.7)*43758.5453; return x-Math.floor(x); }
+
+/* ── TAP DRAWING ─────────────────────────────────────────── */
+function drawTap(cx,cy,isOpen,label,facesRight) {
+  ctx.save();
+  const spoutX = facesRight ? SA.x : SB.x;
+  const spoutY = SA.y;           // 128
+  const bracketY = cy - 22;      // ceiling bracket
+  const labelX   = facesRight ? cx-44 : cx+44;
+  const BLUE='#1e3a7e', DARK='#0d1830';
+
+  // ─── Ceiling bracket ───────────────────────────────────────
+  ctx.fillStyle=DARK;
+  roundRect(ctx, cx-17, bracketY-7, 34, 12, 4);
+  ctx.fill();
+  // bracket screws
+  ctx.fillStyle='#060e20';
+  for(const sx of [cx-9, cx+9]){
+    ctx.beginPath(); ctx.arc(sx, bracketY-1, 2.5, 0, Math.PI*2); ctx.fill();
+  }
+  // bracket underside collar
+  ctx.fillStyle='#1a2d6a';
+  roundRect(ctx, cx-7, bracketY+5, 14, 8, 3);
+  ctx.fill();
+
+  // ─── 3D pipe helper (gradient-filled cylinder look) ────────
+  const pipe3d=(x0,y0,x1,y1,r)=>{
+    const dx=x1-x0,dy=y1-y0,l=Math.sqrt(dx*dx+dy*dy);
+    const nx=-dy/l,ny=dx/l;
+    ctx.beginPath();
+    ctx.moveTo(x0+nx*r,y0+ny*r); ctx.lineTo(x1+nx*r,y1+ny*r);
+    ctx.lineTo(x1-nx*r,y1-ny*r); ctx.lineTo(x0-nx*r,y0-ny*r);
+    ctx.closePath();
+    const g=ctx.createLinearGradient(x0+nx*r,y0+ny*r,x0-nx*r,y0-ny*r);
+    g.addColorStop(0,'#060f25');
+    g.addColorStop(0.2,'#142258');
+    g.addColorStop(0.5,'#2a52aa');
+    g.addColorStop(0.8,'#142258');
+    g.addColorStop(1,'#060f25');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.17)'; ctx.lineWidth=1.8; ctx.lineCap='butt';
+    ctx.beginPath();
+    ctx.moveTo(x0+nx*r*0.4,y0+ny*r*0.4); ctx.lineTo(x1+nx*r*0.4,y1+ny*r*0.4);
+    ctx.stroke();
+  };
+
+  // ─── Short vertical pipe (bracket → valve) ─────────────────
+  pipe3d(cx, bracketY+11, cx, cy-19, 6);
+
+  // ─── Valve housing (ring) ──────────────────────────────────
+  ctx.fillStyle='#0d1e50';
+  ctx.beginPath(); ctx.arc(cx, cy, 21, 0, Math.PI*2); ctx.fill();
+
+  // ─── Valve face ────────────────────────────────────────────
+  ctx.fillStyle = isOpen ? '#be3c15' : '#1e3080';
+  ctx.beginPath(); ctx.arc(cx, cy, 17, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = isOpen ? '#E8622A' : '#3a60b8';
+  ctx.lineWidth=2.8;
+  ctx.beginPath(); ctx.arc(cx, cy, 17, 0, Math.PI*2); ctx.stroke();
+
+  // ─── Wheel spokes (rotate slowly when open) ────────────────
+  const rot = isOpen ? (tick*0.013) % (Math.PI*2) : 0;
+  ctx.save();
+  ctx.translate(cx, cy); ctx.rotate(rot);
+  ctx.strokeStyle='rgba(255,255,255,0.42)'; ctx.lineWidth=3; ctx.lineCap='round';
+  for(let i=0;i<4;i++){
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-13); ctx.stroke();
+    ctx.rotate(Math.PI/2);
+  }
+  ctx.restore();
+
+  // hub
+  ctx.fillStyle=DARK;
+  ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI*2); ctx.fill();
+  // sheen on valve face
+  ctx.fillStyle='rgba(255,255,255,0.26)';
+  ctx.beginPath(); ctx.arc(cx-6, cy-6, 6, 0, Math.PI*2); ctx.fill();
+
+  // ─── Elbow collar (valve exit joint) ───────────────────────
+  ctx.fillStyle='#081228';
+  ctx.beginPath(); ctx.arc(cx, cy+20, 10, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#1c3270'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.arc(cx, cy+20, 10, 0, Math.PI*2); ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(cx-3, cy+17, 5, Math.PI*1.15, Math.PI*1.7); ctx.stroke();
+
+  // ─── Angled pipe (elbow → spout) ───────────────────────────
+  pipe3d(cx, cy+20, spoutX, spoutY, 6);
+
+  // ─── Spout nozzle (pipe opening) ───────────────────────────
+  const pdx=spoutX-cx, pdy=spoutY-(cy+20);
+  const plen=Math.sqrt(pdx*pdx+pdy*pdy);
+  const snx=-pdy/plen, sny=pdx/plen;
+  ctx.strokeStyle='#040c1e'; ctx.lineWidth=2.5; ctx.lineCap='butt';
+  ctx.beginPath();
+  ctx.moveTo(spoutX+snx*8,spoutY+sny*8); ctx.lineTo(spoutX-snx*8,spoutY-sny*8); ctx.stroke();
+  ctx.fillStyle='#091530';
+  ctx.beginPath(); ctx.arc(spoutX,spoutY,8,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#1e3070'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(spoutX,spoutY,8,0,Math.PI*2); ctx.stroke();
+  if(isOpen){
+    const grd=ctx.createRadialGradient(spoutX,spoutY,0,spoutX,spoutY,6);
+    grd.addColorStop(0,'rgba(140,220,248,0.95)');
+    grd.addColorStop(1,'rgba(31,162,217,0)');
+    ctx.fillStyle=grd;
+    ctx.beginPath(); ctx.arc(spoutX,spoutY,6,0,Math.PI*2); ctx.fill();
+  }
+
+  // ─── Labels (outside the valve) ────────────────────────────
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='bold 19px "Space Grotesk",sans-serif';
+  ctx.fillStyle = isOpen ? '#E8622A' : '#011E60';
+  ctx.fillText(label, labelX, cy-4);
+  ctx.font='700 14px "Space Grotesk",sans-serif';
+  ctx.fillStyle = isOpen ? '#E8622A' : '#6a82b0';
+  ctx.fillText(isOpen?'1':'0', labelX, cy+14);
+
+  ctx.restore();
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+  ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r);
+  ctx.lineTo(x,y+r);
+  ctx.arcTo(x,y,x+r,y,r);
+  ctx.closePath();
+}
+
+/* ── JAR SHAPES ──────────────────────────────────────────── */
+// Each returns { clip(ctx), outline(ctx), waterTopAt(level) }
+
+function jarWide() {
+  const l=JL,r=JR,t=JT,b=JB;
+  return {
+    clip(ctx){
+      ctx.beginPath();
+      ctx.rect(l+3, t, r-l-6, b-t-4);
+    },
+    outline(ctx){
+      ctx.beginPath();
+      // Left wall — no horizontal line at top (open mouth)
+      ctx.moveTo(l+4, t);
+      ctx.lineTo(l, t+8);
+      ctx.lineTo(l, b-10);
+      ctx.quadraticCurveTo(l, b, l+14, b);
+      ctx.lineTo(r-14, b);
+      ctx.quadraticCurveTo(r, b, r, b-10);
+      ctx.lineTo(r, t+8);
+      ctx.lineTo(r-4, t);
+    },
+    waterTop(level){ return b-12-(b-t-20)*clamp(level,0,1); },
+    fillLeft(){ return l+3; },
+    fillRight(){ return r-3; }
+  };
+}
+
+function jarFlask() {
+  const l=JL,r=JR,t=JT,b=JB,cx=JCX;
+  const nw=30, nt=t-5, nb=t+38;
+  const nl=cx-nw/2, nr=cx+nw/2;
+  const sw=t+68; // shoulder y
+  return {
+    clip(ctx){
+      ctx.beginPath();
+      ctx.moveTo(nl+2,nt+2);
+      ctx.lineTo(nl+2,nb);
+      ctx.bezierCurveTo(nl-4,sw,l+22,sw-2,l+3,sw+10);
+      ctx.lineTo(l+3,b-8);
+      ctx.lineTo(r-3,b-8);
+      ctx.lineTo(r-3,sw+10);
+      ctx.bezierCurveTo(r-22,sw-2,nr+4,sw,nr-2,nb);
+      ctx.lineTo(nr-2,nt+2);
+      ctx.closePath();
+    },
+    outline(ctx){
+      ctx.beginPath();
+      // Left neck
+      ctx.moveTo(nl+2,nt);
+      ctx.lineTo(nl,nb);
+      // Left shoulder
+      ctx.bezierCurveTo(nl-6,sw,l+20,sw,l,sw+12);
+      // Left body
+      ctx.lineTo(l,b-10);
+      ctx.quadraticCurveTo(l,b,l+14,b);
+      ctx.lineTo(r-14,b);
+      ctx.quadraticCurveTo(r,b,r,b-10);
+      // Right body
+      ctx.lineTo(r,sw+12);
+      // Right shoulder
+      ctx.bezierCurveTo(r-20,sw,nr+6,sw,nr,nb);
+      // Right neck
+      ctx.lineTo(nr-2,nt);
+    },
+    waterTop(level){
+      const tot = b-nt-24;
+      const fy  = (b-12)-tot*clamp(level,0,1);
+      return fy;
+    },
+    fillLeft(){ return l+3; },
+    fillRight(){ return r-3; },
+    extra:{ nl,nr,nt,nb,sw }
+  };
+}
+
+function jarTwoHole() {
+  const l=JL,r=JR,t=JT,b=JB,cx=JCX;
+  const rimH=18, scleft=cx-62, scright=cx+62;
+  const lhR=l+68, rhL=r-68; // edge of holes
+  return {
+    clip(ctx){
+      ctx.beginPath();
+      ctx.rect(l+3, t+rimH, r-l-6, b-t-rimH-4);
+    },
+    outline(ctx){
+      // Left hole mouth (open, no top line)
+      ctx.beginPath();
+      ctx.moveTo(l+3,t);
+      ctx.lineTo(l,t+6);
+      ctx.lineTo(l,t+rimH);
+      // bottom of left rim
+      ctx.lineTo(lhR,t+rimH);
+      // Up to solid center
+      ctx.lineTo(scleft,t+rimH);
+      ctx.lineTo(scleft,t-3);
+      ctx.lineTo(scright,t-3);
+      ctx.lineTo(scright,t+rimH);
+      // Right rim
+      ctx.lineTo(rhL,t+rimH);
+      ctx.lineTo(r,t+rimH);
+      ctx.lineTo(r,t+6);
+      ctx.lineTo(r-3,t);
+      // Right body wall
+      ctx.moveTo(r,t+rimH);
+      ctx.lineTo(r,b-10);
+      ctx.quadraticCurveTo(r,b,r-14,b);
+      ctx.lineTo(l+14,b);
+      ctx.quadraticCurveTo(l,b,l,b-10);
+      ctx.lineTo(l,t+rimH);
+      // Solid center glass - filled outline
+      ctx.moveTo(scleft,t-3);
+      ctx.lineTo(scleft,t+rimH);
+      ctx.lineTo(scright,t+rimH);
+      ctx.lineTo(scright,t-3);
+      ctx.closePath();
+    },
+    solidCenter(ctx){
+      ctx.beginPath();
+      ctx.rect(scleft,t-3,scright-scleft,rimH+3);
+    },
+    waterTop(level){ return b-12-(b-t-rimH-8)*clamp(level,0,1); },
+    fillLeft(){ return l+3; },
+    fillRight(){ return r-3; },
+    extra:{ scleft,scright,rimH,lhR,rhL }
+  };
+}
+
+function getJar(){
+  const t = GATES[gate].jarType;
+  if(t==='wide')    return jarWide();
+  if(t==='flask')   return jarFlask();
+  if(t==='twohole') return jarTwoHole();
+}
+
+/* ── WATER FILL ───────────────────────────────────────────── */
+function drawWaterFill(jar){
+  if(wLevel<0.005) return;
+  ctx.save();
+  jar.clip(ctx);
+  ctx.clip();
+
+  const fl= jar.fillLeft(), fr= jar.fillRight();
+  const fy= jar.waterTop(wLevel), fb=JB-6;
+
+  // Base fill gradient
+  const grd=ctx.createLinearGradient(fl,fy,fr,fb);
+  grd.addColorStop(0,'rgba(31,162,217,0.82)');
+  grd.addColorStop(0.45,'rgba(100,196,228,0.88)');
+  grd.addColorStop(1,'rgba(20,130,190,0.92)');
+  ctx.fillStyle=grd;
+  ctx.fillRect(fl,fy+5,fr-fl,fb-fy+4);
+
+  // Wave surface (3 harmonics for organic feel)
+  if(!PRM){
+    const ph=tick*0.040;
+    ctx.fillStyle='rgba(120,200,238,0.48)';
+    ctx.beginPath();
+    ctx.moveTo(fl,fy+5);
+    for(let x=fl;x<=fr;x+=2){
+      const w1=Math.sin(0.036*x+ph)*3.8;
+      const w2=Math.sin(0.062*x-ph*1.3)*1.8;
+      const w3=Math.sin(0.018*x+ph*0.7)*1.2;
+      ctx.lineTo(x, fy+5+w1+w2+w3);
+    }
+    ctx.lineTo(fr,fb+4); ctx.lineTo(fl,fb+4);
+    ctx.closePath(); ctx.fill();
+
+    // Surface highlight shimmer
+    const sfG=ctx.createLinearGradient(fl,fy+5,fr,fy+5);
+    sfG.addColorStop(0,'rgba(255,255,255,0)');
+    sfG.addColorStop(0.25,'rgba(255,255,255,0.48)');
+    sfG.addColorStop(0.75,'rgba(255,255,255,0.48)');
+    sfG.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.strokeStyle=sfG; ctx.lineWidth=1.8; ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(fl+14, fy+5);
+    for(let x=fl+14;x<=fr-14;x+=3){
+      const w=Math.sin(0.036*x+ph)*3.8+Math.sin(0.062*x-ph*1.3)*1.8;
+      ctx.lineTo(x, fy+5+w);
+    }
+    ctx.stroke();
+  }
+
+  // Interior volume highlight (left-side caustic)
+  ctx.fillStyle='rgba(255,255,255,0.15)';
+  ctx.fillRect(fl+8, fy+8, 10, Math.min(58,(fb-fy)*0.38));
+
+  // Bubbles
+  if(!PRM && wLevel>0.05){
+    for(let i=0;i<6;i++){
+      const bx=fl+24+sr(i*7)*(fr-fl-48);
+      const fh=fb-fy;
+      const by2=fb-8-fh*((( tick*0.004+sr(i*13)*0.7)%0.9));
+      if(by2<fy+10) continue;
+      const br=1.5+sr(i*3)*2.5;
+      ctx.strokeStyle='rgba(255,255,255,0.45)';
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.arc(bx,by2,br,0,Math.PI*2);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+
+  // Flask: fill neck if full enough
+  if(GATES[gate].jarType==='flask' && wLevel>0.6){
+    const ex=jar.extra;
+    const neckFill=clamp((wLevel-0.6)/0.4,0,1);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(ex.nl+2, ex.nt+2, ex.nr-ex.nl-4, ex.nb-ex.nt-2);
+    ctx.clip();
+    const nfh=(ex.nb-ex.nt-4)*neckFill;
+    const nfy=ex.nb-nfh;
+    ctx.fillStyle='rgba(31,162,217,0.85)';
+    ctx.fillRect(ex.nl+2,nfy,ex.nr-ex.nl-4,nfh+4);
+    ctx.restore();
+  }
+}
+
+/* ── JAR DRAW ─────────────────────────────────────────────── */
+function drawJar(jar){
+  const jt=GATES[gate].jarType;
+
+  // ─── Interior glass tint ─────────────────────────────────
+  ctx.save();
+  jar.clip(ctx); ctx.clip();
+  const bgG=ctx.createLinearGradient(JL,JT,JR,JT);
+  bgG.addColorStop(0,'rgba(190,225,250,0.13)');
+  bgG.addColorStop(0.5,'rgba(220,242,255,0.04)');
+  bgG.addColorStop(1,'rgba(190,225,250,0.13)');
+  ctx.fillStyle=bgG;
+  ctx.fillRect(JL,JT,JR-JL,JB-JT);
+  ctx.restore();
+
+  // ─── XOR: solid center glass block ───────────────────────
+  if(jt==='twohole'){
+    const ex=jar.extra;
+    // Fill with glass gradient
+    const cg=ctx.createLinearGradient(ex.scleft,JT,ex.scright,JT);
+    cg.addColorStop(0,'rgba(160,210,245,0.5)');
+    cg.addColorStop(0.35,'rgba(210,240,255,0.72)');
+    cg.addColorStop(0.65,'rgba(240,252,255,0.78)');
+    cg.addColorStop(1,'rgba(160,210,245,0.5)');
+    ctx.fillStyle=cg;
+    jar.solidCenter(ctx); ctx.fill();
+    // Inner highlight stripe on solid center
+    ctx.fillStyle='rgba(255,255,255,0.45)';
+    ctx.fillRect(ex.scleft+8, JT-1, 11, ex.rimH+1);
+    // Edge of solid center
+    ctx.strokeStyle='rgba(31,162,217,0.7)'; ctx.lineWidth=1.8;
+    jar.solidCenter(ctx); ctx.stroke();
+  }
+
+  // ─── Glass wall glow (soft thick underlay) ──────────────
+  ctx.save();
+  ctx.shadowColor='rgba(31,162,217,0.25)'; ctx.shadowBlur=20;
+  ctx.strokeStyle='rgba(31,162,217,0.18)';
+  ctx.lineWidth=9; ctx.lineJoin='round'; ctx.lineCap='round';
+  jar.outline(ctx); ctx.stroke();
+  ctx.restore();
+
+  // ─── Glass wall fill (between outline and inside) ────────
+  // Simulate glass thickness: draw a slightly filled version
+  ctx.save();
+  ctx.strokeStyle='rgba(160,215,248,0.32)';
+  ctx.lineWidth=6; ctx.lineJoin='round'; ctx.lineCap='round';
+  jar.outline(ctx); ctx.stroke();
+  ctx.restore();
+
+  // ─── Crisp outer glass edge ──────────────────────────────
+  ctx.save();
+  ctx.strokeStyle='rgba(31,162,217,0.82)';
+  ctx.lineWidth=2.2; ctx.lineJoin='round'; ctx.lineCap='round';
+  jar.outline(ctx); ctx.stroke();
+  ctx.restore();
+
+  // ─── Reflective highlights inside the glass ──────────────
+  ctx.save();
+  jar.clip(ctx); ctx.clip();
+  // Primary highlight (left inner wall)
+  const hlx1=JL+12;
+  const hlG=ctx.createLinearGradient(hlx1,JT+18,hlx1,JB-40);
+  hlG.addColorStop(0,'rgba(255,255,255,0.58)');
+  hlG.addColorStop(0.5,'rgba(255,255,255,0.32)');
+  hlG.addColorStop(1,'rgba(255,255,255,0.12)');
+  ctx.strokeStyle=hlG; ctx.lineWidth=3; ctx.lineCap='round';
+  ctx.beginPath();
+  ctx.moveTo(hlx1, JT+18); ctx.lineTo(hlx1, JB-40);
+  ctx.stroke();
+  // Secondary faint highlight
+  ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(hlx1+8, JT+30); ctx.lineTo(hlx1+8, JT+110);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/* ── STREAMS ─────────────────────────────────────────────── */
+function drawStreams(){
+  const k=key();
+  const streams=GATES[gate].streams[k];
+  if(!streams||streams.length===0) return;
+  for(const s of streams) drawStream(s, k);
+}
+
+function drawStream(s, k){
+  const { p0,cp,p1,tag,collide,postColl } = s;
+  const DROPS=11;
+  const speed=0.0048;
+  const phOff= tag==='B' ? 0.5 : tag==='C' ? 0.28 : tag==='D' ? 0.72 : 0;
+
+  ctx.save();
+
+  // ─── Guide thread: subtle dashed path showing full trajectory ──
+  if(!collide && !postColl){
+    ctx.save();
+    ctx.strokeStyle='rgba(127,205,238,0.20)';
+    ctx.lineWidth=3.5; ctx.lineCap='round';
+    ctx.setLineDash([4,7]);
+    ctx.beginPath();
+    ctx.moveTo(p0.x,p0.y);
+    ctx.quadraticCurveTo(cp.x,cp.y,p1.x,p1.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // ─── Animated elongated drops ──────────────────────────────
+  for(let i=0;i<DROPS;i++){
+    let t=((tick*speed + (i/DROPS) + phOff) % 1);
+
+    if(collide && t>0.83) continue;
+    if(postColl && t<0.13) continue;
+
+    // Tangent for drop orientation
+    const eps=0.055;
+    const ta=bpt(Math.max(0,t-eps),p0,cp,p1);
+    const tb=bpt(Math.min(1,t+eps),p0,cp,p1);
+    const dx=tb.x-ta.x, dy=tb.y-ta.y;
+    const angle=Math.atan2(dy,dx);
+    const pt=bpt(t,p0,cp,p1);
+
+    // Alpha fade at ends
+    let alpha=1;
+    if(t<0.08)  alpha=t/0.08;
+    if(!collide && t>0.86)  alpha=(1-t)/0.14;
+    if(collide && t>0.62)   alpha=1-(t-0.62)/0.21;
+
+    const seed=i*19+tag.charCodeAt(0);
+    const sv=0.72+sr(seed)*0.52;
+    const rx=(3.8+t*3.0)*sv;   // length (along flow)
+    const ry=rx*0.52;           // width (perpendicular)
+
+    ctx.save();
+    ctx.translate(pt.x, pt.y);
+    ctx.rotate(angle);
+    ctx.globalAlpha=alpha*0.93;
+
+    // Radial gradient: bright white core → water blue edge
+    const grd=ctx.createRadialGradient(-rx*0.18,0,0, 0,0,rx);
+    grd.addColorStop(0,  'rgba(230,248,255,1)');
+    grd.addColorStop(0.3,'rgba(100,200,238,0.97)');
+    grd.addColorStop(0.75,'rgba(31,162,217,0.82)');
+    grd.addColorStop(1,  'rgba(15,110,190,0.35)');
+    ctx.fillStyle=grd;
+
+    ctx.beginPath();
+    ctx.ellipse(0,0, rx*1.35, ry, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  ctx.globalAlpha=1;
+  ctx.restore();
+}
+
+/* ── PARTICLES ────────────────────────────────────────────── */
+function spawnSplash(x,y,n,spread,baseAngle,color){
+  for(let i=0;i<n;i++){
+    const a=baseAngle+(sr(i*31+tick%97)-0.5)*spread;
+    const spd=0.8+sr(i*47+tick%61)*3.2;
+    particles.push({
+      x,y,
+      vx:Math.cos(a)*spd,
+      vy:Math.sin(a)*spd,
+      life:1,
+      decay:0.018+sr(i*13)*0.022,
+      r:1.8+sr(i*23)*2.8,
+      color
+    });
+  }
+}
+
+function updateParticles(){
+  particles=particles.filter(p=>p.life>0);
+  for(const p of particles){
+    p.x+=p.vx; p.y+=p.vy;
+    p.vy+=0.14;
+    p.vx*=0.98;
+    p.life-=p.decay;
+  }
+}
+
+function drawParticles(){
+  ctx.save();
+  for(const p of particles){
+    ctx.globalAlpha=p.life*0.85;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r*clamp(p.life,0.3,1),0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  ctx.restore();
+}
+
+/* ── COLLISION GLOW ───────────────────────────────────────── */
+function drawCollisionGlow(x,y){
+  if(PRM) return;
+  const pulse=0.55+0.45*Math.sin(tick*0.12);
+  const grd=ctx.createRadialGradient(x,y,0,x,y,26*pulse);
+  grd.addColorStop(0,'rgba(255,255,255,0.8)');
+  grd.addColorStop(0.4,'rgba(127,205,238,0.5)');
+  grd.addColorStop(1,'rgba(31,162,217,0)');
+  ctx.save();
+  ctx.fillStyle=grd;
+  ctx.beginPath();
+  ctx.arc(x,y,26*pulse,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/* ── MAIN DRAW ────────────────────────────────────────────── */
+function draw(){
+  ctx.clearRect(0,0,CW,CH);
+
+  // Water level update
+  wTarget = output();
+  const lspd = PRM ? 0.6 : 0.018;
+  wLevel=lerp(wLevel,wTarget,lspd);
+  if(wLevel<0.008) wLevel=0;
+  if(wLevel>0.992) wLevel=1;
+
+  const jar=getJar();
+
+  // Draw water BEHIND jar outline
+  drawWaterFill(jar);
+  drawJar(jar);
+
+  // Streams (always draw — visual is needed for pedagogy even with reduced-motion)
+  drawStreams();
+
+  // Particle management
+  const k=key();
+  const gd=GATES[gate];
+  const hasSplash=gd.splash && (k==='11');
+  if(!PRM && hasSplash && splashCooldown<=0 && gd.streams[k]?.length){
+    if(gate==='XOR'){
+      // XOR: water hits solid glass → spray outward & upward
+      spawnSplash(gd.splash.x, gd.splash.y, 5, Math.PI*1.5, Math.PI*1.5, '#7FCDEE');
+      splashCooldown=4;
+    } else if(gate==='OR'){
+      // OR: streams cross mid-air → brief scatter, water still falls into jar
+      spawnSplash(gd.splash.x, gd.splash.y, 4, 1.6, Math.PI*1.5, '#7FCDEE');
+      splashCooldown=6;
+    } else {
+      // AND: streams collide → merge downward into neck (small burst)
+      spawnSplash(gd.splash.x, gd.splash.y, 3, 0.5, Math.PI*0.5, '#1FA2D9');
+      splashCooldown=8;
+    }
+  }
+  if(splashCooldown>0) splashCooldown--;
+
+  // AND miss: drips slide down the neck wall
+  if(!PRM && gate==='AND' && (k==='10'||k==='01')){
+    if(tick%20===0){
+      const hx=k==='10' ? 435 : 265;
+      spawnSplash(hx, 315, 2, 0.4, k==='10' ? 0 : Math.PI, '#5baed6');
+    }
+  }
+
+  // Collision glow for AND/XOR both
+  if(hasSplash && !PRM){
+    drawCollisionGlow(gd.splash.x, gd.splash.y);
+  }
+
+  updateParticles();
+  drawParticles();
+
+  // Taps
+  drawTap(TA.x, TA.y, openA, 'A', true);
+  drawTap(TB.x, TB.y, openB, 'B', false);
+
+  // Gate name overlay (center top)
+  ctx.save();
+  ctx.textAlign='center';
+  ctx.font='500 12px Inter,sans-serif';
+  ctx.fillStyle='rgba(1,30,96,0.4)';
+  ctx.fillText('Puerta', CW/2, 26);
+  ctx.font='bold 24px "Space Grotesk",sans-serif';
+  ctx.fillStyle='#011E60';
+  ctx.fillText(gate, CW/2, 50);
+  ctx.restore();
+
+  tick++;
+  requestAnimationFrame(draw);
+}
+
+/* ── UI UPDATES ───────────────────────────────────────────── */
+function updateUI(){
+  const k=key();
+  const gd=GATES[gate];
+  const out=gd.out[k];
+
+  // Truth table: only reveal current row's C
+  document.querySelectorAll('#truthBody tr').forEach(row=>{
+    const rk=row.dataset.key;
+    const cell=row.querySelector('.c-cell');
+    if(rk===k){
+      row.classList.add('active-row');
+      cell.textContent=out;
+      cell.className='c-cell c-visible '+(out?'c-val1':'c-val0');
+    } else {
+      row.classList.remove('active-row');
+      cell.textContent='';
+      cell.className='c-cell c-hidden';
+    }
+  });
+
+  // Output display
+  const od=document.getElementById('outputBig');
+  od.textContent=out;
+  od.className='output-big '+(out?'val1':'val0');
+
+  // Gate label
+  document.getElementById('gateLabel').textContent=gate;
+
+  // Explanation
+  const el=document.getElementById('explText');
+  el.textContent=gd.expl[k];
+
+  // Accessible tap buttons labels
+  document.getElementById('tapBtnA').setAttribute('aria-pressed', openA?'true':'false');
+  document.getElementById('tapBtnA').setAttribute('aria-label',
+    `Grifo A — ${openA?'abierto (1)':'cerrado (0)'}. Pulsa para ${openA?'cerrar':'abrir'}.`);
+  document.getElementById('tapBtnB').setAttribute('aria-pressed', openB?'true':'false');
+  document.getElementById('tapBtnB').setAttribute('aria-label',
+    `Grifo B — ${openB?'abierto (1)':'cerrado (0)'}. Pulsa para ${openB?'cerrar':'abrir'}.`);
+}
+
+/* ── TAP HIT BUTTON POSITIONING ──────────────────────────── */
+function positionTapButtons(){
+  const wrap=document.getElementById('canvasWrap');
+  const scale=canvas.getBoundingClientRect().width / CW;
+  const pad=10; // wrapper padding
+
+  function pos(btn,tx,ty){
+    const bw=88*scale, bh=110*scale;
+    const cx2=(tx-44)*scale+pad;
+    const cy2=(ty-30)*scale+pad;
+    btn.style.left  = cx2+'px';
+    btn.style.top   = cy2+'px';
+    btn.style.width = bw+'px';
+    btn.style.height= bh+'px';
+  }
+  pos(document.getElementById('tapBtnA'), TA.x, TA.y);
+  pos(document.getElementById('tapBtnB'), TB.x, TB.y);
+}
+
+/* ── EVENTS ───────────────────────────────────────────────── */
+// Canvas click → detect tap hit
+canvas.addEventListener('click', e=>{
+  const rect=canvas.getBoundingClientRect();
+  const sx=CW/rect.width;
+  const sy=CH/rect.height;
+  const cx2=(e.clientX-rect.left)*sx;
+  const cy2=(e.clientY-rect.top)*sy;
+
+  function inTap(tx,ty){ return cx2>tx-45&&cx2<tx+45&&cy2>ty-32&&cy2<ty+108; }
+  if(inTap(TA.x,TA.y)){ openA=!openA; particles=[]; updateUI(); return; }
+  if(inTap(TB.x,TB.y)){ openB=!openB; particles=[]; updateUI(); }
+});
+
+// Accessible invisible buttons
+document.getElementById('tapBtnA').addEventListener('click', ()=>{
+  openA=!openA; particles=[]; updateUI();
+});
+document.getElementById('tapBtnB').addEventListener('click', ()=>{
+  openB=!openB; particles=[]; updateUI();
+});
+
+// Gate tabs
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    gate=btn.dataset.gate;
+    openA=openB=false;
+    wLevel=0; particles=[]; splashCooldown=0;
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+      b.classList.remove('active');
+      b.setAttribute('aria-selected','false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
+    updateUI();
+  });
+});
+
+// Reset
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  openA=openB=false; particles=[]; splashCooldown=0; updateUI();
+});
+
+// Touch support
+canvas.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  const t=e.touches[0];
+  const rect=canvas.getBoundingClientRect();
+  const sx=CW/rect.width, sy=CH/rect.height;
+  const cx2=(t.clientX-rect.left)*sx;
+  const cy2=(t.clientY-rect.top)*sy;
+  function inTap(tx,ty){ return cx2>tx-45&&cx2<tx+45&&cy2>ty-32&&cy2<ty+108; }
+  if(inTap(TA.x,TA.y)){ openA=!openA; particles=[]; updateUI(); }
+  else if(inTap(TB.x,TB.y)){ openB=!openB; particles=[]; updateUI(); }
+},{passive:false});
+
+/* ── INIT ─────────────────────────────────────────────────── */
+resizeCanvas();
+updateUI();
+draw();
+</script>
+</body>
 </html>
